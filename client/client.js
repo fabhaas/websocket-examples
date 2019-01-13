@@ -6,13 +6,13 @@ function appendMsg(msg, user) {
 }
 
 function sendMsg(msg) {
-    socket.send(JSON.stringify({ "type": "msg", "data": msg}));
+    socket.send(JSON.stringify({ "type": "msg", "data": msg }));
 }
 
 function sendMsgEvent(e) {
     const txtMsg = document.getElementById("txtMsg");
     const msg = txtMsg.value;
-    
+
     appendMsg(msg, "You");
     txtMsg.value = "";
     sendMsg(msg);
@@ -31,6 +31,17 @@ socket.addEventListener("error", err => {
 
 // listen for messages
 socket.addEventListener("message", e => {
+    if (e.data instanceof Blob) {
+        const reader = new FileReader();
+
+        reader.addEventListener('loadend', e => {
+            document.getElementById("qrcode").src = e.target.result;
+        });
+
+        reader.readAsText(e.data);
+        return;
+    }
+
     const msg = JSON.parse(e.data);
     switch (msg.type) {
         case "msg":

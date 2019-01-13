@@ -61,11 +61,17 @@
             color: #eee;
             font: 14px Arial;
         }
+
+        #qrcode {
+            float: right;
+            border: 2px solid black;
+        }
     </style>
     <script src="client.js" defer></script>
 </head>
 
 <body>
+    <img id="qrcode" />
     <ul id="lbMsg"></ul>
     <div class="sendMsg">
         <label id="lUser"></label>
