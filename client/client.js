@@ -19,13 +19,18 @@ function sendMsgEvent(e) {
 }
 
 // connection opened
-socket.addEventListener("open", function (e) {
+socket.addEventListener("open", e => {
     console.log("connection opened");
 });
 
+//event is called if error occurs
+socket.addEventListener("error", err => {
+    //log error
+    console.error(err);
+});
 
 // listen for messages
-socket.addEventListener("message", function (e) {
+socket.addEventListener("message", e => {
     const msg = JSON.parse(e.data);
     switch (msg.type) {
         case "msg":
@@ -40,8 +45,8 @@ socket.addEventListener("message", function (e) {
     }
 });
 
-document.getElementById("btnSend").addEventListener("click", (e) => sendMsgEvent(e));
-document.getElementById("txtMsg").addEventListener("keyup", (e) => {
+document.getElementById("btnSend").addEventListener("click", e => sendMsgEvent(e));
+document.getElementById("txtMsg").addEventListener("keyup", e => {
     if (e.keyCode === 13)
         sendMsgEvent(e);
 });

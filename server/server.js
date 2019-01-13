@@ -5,7 +5,9 @@ const crypto = require("crypto");
 const express = require("express");
 const app = express();
 app.use(express.static("../client"));
-app.listen(3000);
+app.listen(3000, () => {
+  console.log("listening on port 3000");
+});
 
 
 //import module
@@ -16,13 +18,18 @@ const wss = new WebSocket.Server({
   port: 8080
 });
 
+function errHandler(err) {
+  if (err)
+    console.error(err);
+}
+
 //event handling
 wss.on("connection", function connection(ws) {
   //generate id
   let id = crypto.randomBytes(8).toString("hex");
 
   //send message when connection is established
-  ws.send(JSON.stringify({ "type": "sendID", "data": id }));
+  ws.send(JSON.stringify({ "type": "sendID", "data": id }), err => errHandler(err));
 
   //listen for messages
   ws.on("message", function incoming(data) {
@@ -32,7 +39,7 @@ wss.on("connection", function connection(ws) {
       case "msg":
         wss.clients.forEach(function each(client) {
           if (client !== ws && client.readyState === WebSocket.OPEN)
-            client.send(JSON.stringify({ "type": "msg", "sender": id, "data": msg.data }));
+            client.send(JSON.stringify({ "type": "msg", "sender": id, "data": msg.data }), err => errHandler(err));
         });
         console.log("received: %s from %s", msg.data, id);
         break;
