@@ -1,3 +1,19 @@
+/*
+* Copyright 2019 Elias Sandner, Fabian Haas
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 //for generating id
 const qrcode = require("qrcode");
 const crypto = require("crypto");
@@ -33,15 +49,18 @@ wss.on("error", err => {
 //event handling
 wss.on("connection", ws => {
   //generate id
-  let id = crypto.randomBytes(8).toString("hex");
+  const id = crypto.randomBytes(8).toString("hex");
 
+  console.log(`The user ${id} connected.`);
+  ws.on("error", err => errHandler(err));
+  ws.on("close", (code, reason) => console.log(`Closed connection to ${id} with code ${code} because of ${reason}.`));
 
   qrcode.toDataURL(id, function (err, url) {
     if (err) {
       console.error(err);
       return;
     }
-    
+
     ws.send(Buffer.from(url), err => errHandler(err));
   });
 
